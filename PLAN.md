@@ -110,6 +110,23 @@ loaded by `qemu-system-pdp64 -kernel`, single core, console only. That needs eve
 nothing else; userland can be static first (OpenBSD supports `-static-pie`/static builds), which
 defers T7/A13 past first boot but not past multi-user.
 
+
+**Self-hosting (decided 2026-11-24).** The standard way to build OpenBSD is on OpenBSD, so the pdp64
+port builds itself: the release is built inside OpenBSD running on the pdp64 emulator, the kernel,
+userland and clang included. The cross build above is only the bootstrap that produces the first
+native system. What self-hosting adds, none of it needed for first boot:
+
+- **clang must compile clang.** The in-tree LLVM is C++, so the toolchain needs a working C++
+  runtime for the pdp64 (`libc++`, `libc++abi`, `libunwind`), exceptions and unwind tables, TLS,
+  atomics, and the 128-bit helpers (T7, T6 and the atomics in A1 stop being optional).
+- **The machine must be big enough.** A native clang build needs gigabytes of RAM and tens of
+  gigabytes of disk; the QEMU machine today has 128 to 256 MiB of RAM and one CPU (Q3, Q7). Large
+  RAM, a big virtio disk and SMP (A11) become gates for self-hosting, not afterthoughts.
+- **Speed.** Under emulation a native LLVM build will take hours to days; the cross build stays
+  useful for quick turnarounds, and the check is that both give the same result.
+- **The self-build is the test** that the port is complete: a release built natively on the pdp64
+  has to boot and build the next one.
+
 ---
 
 ## 7. Later stages (after `pdp64/` settles) — outline only
