@@ -29,6 +29,8 @@ Ordered by when the port needs it. Base: `target/PDP64` of the [llvm-pdp64](http
    from lld generic code; `PT_OPENBSD_*` segments already exist in OpenBSD's lld.
 8. compiler-rt builtins, then libunwind/libc++ later.
 
+**A disassembler (a stated goal).** The cross tools OpenBSD builds include the old GNU `objdump` (binutils 2.17), which cannot disassemble RISC-V (`Can't disassemble for architecture riscv:rv64`, seen on the riscv64 cross build here), and the same would happen for the pdp64. The pdp64 must have a working disassembler: the MC `Disassembler` in the LLVM back end (item 1), driving `llvm-objdump`, and an `objdump` in the binutils port the Debian work needs. `ddb` also needs one in the kernel (`db_disasm.c`, which we generate from the grammar codec).
+
 **Before dynamic userland**
 9. PIC/PIE (`d(PC)` data, `got(PC)` imports), GOT/PLT decision, dynamic relocs
    (`RELATIVE`, `GLOB_DAT`, `JUMP_SLOT`, `COPY`, `TPOFF`/`DTPMOD`/`DTPOFF`), TLS models via user `DP`.
