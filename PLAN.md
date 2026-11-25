@@ -161,6 +161,19 @@ filesystem and the `filsys` filesystem** to OpenBSD/pdp64 (after the port itself
 driver today, so it rides on OpenBSD's `fuse(4)`/libfuse or becomes a kernel filesystem — to be
 decided then).
 
+**After the OpenBSD port: Debian 13 (decided 2026-11-24).** A second operating system for the pdp64,
+with the bare minimum of Debian (the `minbase` set: dpkg, apt, coreutils, a shell and little else).
+Not planned yet; what it will need, so that OpenBSD work does not close doors:
+- a Linux kernel port (`arch/pdp64`), a separate effort from the OpenBSD kernel, which shares only the
+  architecture decisions (syscall convention, atomics, `UA` guard, interrupt delivery);
+- a C library for Debian (glibc is Debian's) and its dynamic-linking ABI, which ties to A13, TLS and
+  the relocation set;
+- a compiler Debian can build with: Debian's is GCC, and our back end is LLVM, so either a GCC back
+  end or building Debian's packages with clang (to be checked how far Debian supports that);
+- a new dpkg architecture name and a bootstrap (`debootstrap`-style, cross first, then native), which
+  repeats the self-hosting question of this plan.
+
+
 ## Assembly to translate (summary; full table in docs/asm-inventory.md and docs/translation-verdicts.md)
 
 Template: the **riscv64** port — newest, smallest, same shape (LP64 LE, software A/D bits, 16-bit
