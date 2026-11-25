@@ -43,17 +43,16 @@ Ordered by when the port needs it. Base: `pdp64/llvm/target/PDP64` on LLVM 21.1.
     `LPAD` at address-taken function entries and `JTAG` targets, syscall stubs emitted so
     `pinsyscalls` can record each `TRAP` site.
 
-**Which LLVM:** OpenBSD's import commits (2026-05-29) say **LLVM 21.1.6** — the same 21.1.x line as
-the pdp64 back end (21.1.8). *Open check:* `gnu/usr.bin/clang/include/llvm/Config/llvm-config.h.in`
-says `22.1.6` although it was updated by the "build infrastructure for llvm-21.1.6" commit; find out
-which is right before copying the target in. So the target directory drops into `gnu/llvm/llvm/lib/Target/PDP64`
-nearly unchanged, and OpenBSD's own passes (retguard at
-`llvm/lib/CodeGen/ReturnProtectorLowering.cpp`, lld's `--execute-only`, `-z nobtcfi`,
-`PT_OPENBSD_SYSCALLS`) are already there. Plan: keep developing in `~/claude/llvm-project`, and
-build the cross compiler **from OpenBSD's `gnu/llvm` tree on Linux** with the PDP64 target copied
-in, so the cross toolchain has the OpenBSD passes. Note retguard today exists only for amd64,
-arm64, powerpc, mips64 — **riscv64 has none** (`#error RETGUARD not yet supported`), so a
-`PDP64ReturnProtectorLowering` modelled on the X86 one is new work, and pdp64 would be the first
-non-x86 target with `-fret-clean`.
+**Which LLVM:** OpenBSD 8.0's clang is **22.1.6** (`OpenBSD clang version 22.1.6`, run on the installed
+8.0 guest; `llvm-config.h.in` in the tree agrees; the commit messages of the import, "LLVM-21.1.6", are
+out of date). The pdp64 back end is written against **21.1.8**, so it has to be moved forward one major
+version before it can sit in `gnu/llvm/llvm/lib/Target/PDP64`: expect API changes in TableGen, the
+selection DAG and MC, not a copy. Once there, OpenBSD's own passes are already in the tree
+(retguard at `llvm/lib/CodeGen/ReturnProtectorLowering.cpp`, lld's `--execute-only`, `-z nobtcfi`,
+`PT_OPENBSD_SYSCALLS`). Plan: develop the target against OpenBSD's 22.1.6 sources (not 21.1.8), and
+build the cross compiler with OpenBSD's own `make cross-tools`, which builds a target clang from the
+tree. Note retguard today exists only for amd64, arm64, powerpc, mips64 — **riscv64 has none**
+(`#error RETGUARD not yet supported`), so a `PDP64ReturnProtectorLowering` modelled on the X86 one is
+new work, and pdp64 would be the first non-x86 target with `-fret-clean`.
 
 ---

@@ -141,6 +141,14 @@ no `qemu-system-x86_64` (the existing build tree is configured for `pdp64-softmm
 x86_64 one in a separate build directory); free memory is low (a few GB available, most of it taken
 by one other process), and an LLVM build wants several GB for the guest.
 
+**The guest exists (2026-11-24).** OpenBSD 8.0 amd64 (`GENERIC.MP`, install image verified with signify
+against the release key) is installed on a 100 GB sparse qcow2 and boots under KVM with a pristine
+QEMU 11.1.2 x86_64 build; it runs in the background and is reached over ssh as an ordinary user with
+`doas`. Its clang is 22.1.6, which sets the LLVM version the pdp64 target must be moved to (see
+`docs/llvm-requirements.md`). The auto layout gave `/usr/obj` 9.7 GB, `/usr/src` 3.6 GB and `/home`
+44.7 GB: tight for an LLVM build, so either build under `/home` or reinstall with a custom layout.
+
+
 ---
 
 ## 7. Later stages (after `pdp64/` settles) — outline only
