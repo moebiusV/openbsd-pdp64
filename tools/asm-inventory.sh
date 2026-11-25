@@ -1,9 +1,9 @@
 #!/bin/sh
 # Inventory of machine-dependent assembly (and inline-asm headers) per architecture.
-# Usage: pdp64-port/tools/asm-inventory.sh [arch ...]   (default: riscv64 arm64 amd64)
-# Run from anywhere; output is markdown on stdout. Read-only.
+# Usage: tools/asm-inventory.sh [arch ...]   (default: riscv64 arm64 amd64)
+# The OpenBSD tree is found as in tools/_tree.sh. Output is markdown on stdout. Read-only.
 set -eu
-root=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
+. "$(dirname "$0")/_tree.sh"; root=$OPENBSD
 cd "$root"
 archs=${*:-riscv64 arm64 amd64}
 echo "OpenBSD base: $(git rev-parse --short=12 HEAD) $(git log -1 --format=%cs)"

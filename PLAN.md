@@ -10,12 +10,14 @@ OpenBSD base: master `c402c876540c` (2026-11-24, 8.0-current; 8.0 released 2026-
 | `llvm-pdp64` | the LLVM back end (split out of `pdp64/llvm`) | `git subtree split` |
 | `qemu-pdp64` | the QEMU target (split out of `pdp64/qemu`) | `git subtree split` |
 | `pcc`, branches `dmr`, `pdp64`, `aarch64`, `riscv` | one repo, linked from the site as separate projects named `pcc-dmr`, `pcc-pdp64`, `pcc-aarch64` (URLs `github.com/moebiusV/pcc/tree/<branch>`) | `dmr` first, then pdp64, aarch64, riscv: it holds all the dmr/sj optimisation work and is the base the other three are rebased onto |
-| `openbsd-pdp64` | this repo: OpenBSD tree on branch `pdp64`, plan in `pdp64-port/` | `openbsd/src` -current |
+| `openbsd-pdp64` | this repo: an overlay on the OpenBSD tree (new files in `overlay/`, changes to OpenBSD's own files as `patches/`) and the plan | OpenBSD -current, commit in `BASE` |
 
 **Done 2026-11-24** (nothing existing was touched; all new branches):
 
-- `moebiusV/openbsd-pdp64`: a GitHub fork of `openbsd/src`, branch `pdp64` (this plan). The
-  `upstream` remote's push URL is disabled so nothing can reach `openbsd/src`.
+- `moebiusV/openbsd-pdp64`: an overlay on the OpenBSD tree, not a fork: only what the port adds or
+  changes (a few megabytes at most), against `BASE` (OpenBSD master `c402c876540c`, 2026-11-24).
+  `tools/apply-overlay.sh` puts it on a checkout, `tools/extract-overlay.sh` takes it back out, and
+  `tools/make-submission-diff.sh` writes the whole port as one diff for `tech@`.
 - `moebiusV/llvm-pdp64` and `moebiusV/qemu-pdp64`: `git subtree split` of `pdp64/llvm` (31 commits)
   and `pdp64/qemu` (53 commits), history kept, plus a README note. `pdp64/llvm` and `pdp64/qemu`
   stay as they are and remain the source of truth; the scripts in the split repos still assume the

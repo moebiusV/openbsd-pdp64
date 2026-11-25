@@ -1,0 +1,13 @@
+title: openbsd-pdp64
+description: The port of OpenBSD to the pdp64, as an overlay on the OpenBSD tree, and the plan for it
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: false
+exclude:
+  - tools
+  - overlay
+  - patches
+  - openbsd
+  - BASE
