@@ -7,8 +7,8 @@ OpenBSD base: master `c402c876540c` (2026-11-24, 8.0-current; 8.0 released 2026-
 | repo | what | based on |
 |---|---|---|
 | `pdp64` | architecture: manual, grammars, `as64`, `ld64`, `sim64`, tests | existing |
-| `llvm-pdp64` | the LLVM back end (split out of `pdp64/llvm`) | `git subtree split` |
-| `qemu-pdp64` | the QEMU target (split out of `pdp64/qemu`) | `git subtree split` |
+| `llvm-pdp64` | the LLVM back end; authoritative (it was `pdp64/llvm`) | split with history |
+| `qemu-pdp64` | the QEMU target and, planned, a user-mode emulator; authoritative (it was `pdp64/qemu`) | split with history |
 | `pcc`, branches `dmr`, `pdp64`, `aarch64`, `riscv` | one repo, linked from the site as separate projects named `pcc-dmr`, `pcc-pdp64`, `pcc-aarch64` (URLs `github.com/moebiusV/pcc/tree/<branch>`) | `dmr` first, then pdp64, aarch64, riscv: it holds all the dmr/sj optimisation work and is the base the other three are rebased onto |
 | `openbsd-pdp64` | this repo: an overlay on the OpenBSD tree (new files in `overlay/`, changes to OpenBSD's own files as `patches/`) and the plan | OpenBSD -current, commit in `BASE` |
 
@@ -18,10 +18,7 @@ OpenBSD base: master `c402c876540c` (2026-11-24, 8.0-current; 8.0 released 2026-
   changes (a few megabytes at most), against `BASE` (OpenBSD master `c402c876540c`, 2026-11-24).
   `tools/apply-overlay.sh` puts it on a checkout, `tools/extract-overlay.sh` takes it back out, and
   `tools/make-submission-diff.sh` writes the whole port as one diff for `tech@`.
-- `moebiusV/llvm-pdp64` and `moebiusV/qemu-pdp64`: `git subtree split` of `pdp64/llvm` (31 commits)
-  and `pdp64/qemu` (53 commits), history kept, plus a README note. `pdp64/llvm` and `pdp64/qemu`
-  stay as they are and remain the source of truth; the scripts in the split repos still assume the
-  `pdp64/<dir>` layout.
+- `moebiusV/llvm-pdp64` and `moebiusV/qemu-pdp64`: split from `pdp64/llvm` (31 commits) and `pdp64/qemu` (53 commits) with history, and **authoritative since 2026-11-24**: `pdp64` no longer carries a copy (the removal is two local commits there, not pushed). Their scripts find the pdp64 checkout next to them (`PDP64`), and pdp64's generators and checks find them (`LLVM_PDP64`, `QEMU_PDP64`). The test suites give the same results as before the move (LLVM: 61 `.ll` tests, the C programs and 88 vector kernels; QEMU: 99 run, 0 failed, 6 skipped).
 - `moebiusV/pcc` branches **`dmr`** (127 commits), **`pdp64`** (+73) and **`aarch64`** (+12), all
   based on upstream PortableCC `9a993a5f`; `pdp64` and `aarch64` sit on top of `dmr`. An earlier
   push of the same names (classified by commit title, with optimisation work left on the back-end
