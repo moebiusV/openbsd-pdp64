@@ -3,7 +3,7 @@
 OpenBSD base: master `c402c876540c` (2026-11-24, 8.0-current; 8.0 released 2026-10-20). Branch `pdp64`. Written 2026-11-24 from the GitHub mirror and checked against the checkout.
 
 
-Ordered by when the port needs it. Base: `pdp64/llvm/target/PDP64` on LLVM 21.1.8.
+Ordered by when the port needs it. Base: `target/PDP64` of the [llvm-pdp64](https://github.com/moebiusV/llvm-pdp64) repository, on LLVM 21.1.8.
 
 **Before any kernel object compiles**
 1. MC layer on the *current* encoding, calling the grammar-generated table codec

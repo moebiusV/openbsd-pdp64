@@ -80,7 +80,9 @@ done; **[S]** rows are needed for single-user → multi-user/ssh, not for first 
 | A13 [S] | Dynamic-linking ABI: GOT form, lazy vs eager binding, TLS models, relocation numbers | ld.so, shared libc | J.D.2 |
 | A14 | Security-corpus holes 6 and 7 (kernel `r2`–`r13` visible after `RTI`; `FPSR` across contexts): decide hardware fix vs kernel scrub | sets what the return-to-user path must do | `docs/security-corpus.md` |
 
-### 1b. Emulator (`pdp64/qemu`) work
+**Device rule (decided 2026-11-24).** The pdp64's virtio devices match the virtio standard exactly: no private variants and no overloading of a standard device's meaning. Anything the standard does not offer becomes a *new* virtio device type with its own name and number, specified and implemented like the others. For example, the pdp64's own text-and-pixels terminal (the Blit and Commodore 64 style device) is not a "virtio-console", which is the standard serial device; it could be called "virtio-blit". Consequence for the port: OpenBSD's existing `viocon(4)`, `viogpu(4)` and the other virtio drivers are used unchanged, and a new device gets a new driver.
+
+### 1b. Emulator (`qemu-pdp64`) work
 
 | # | Item | State today |
 |---|---|---|
@@ -173,6 +175,13 @@ Not planned yet; what it will need, so that OpenBSD work does not close doors:
 - a new dpkg architecture name and a bootstrap (`debootstrap`-style, cross first, then native), which
   repeats the self-hosting question of this plan.
 
+
+## Questions for the OpenBSD developers (from the [porting resources](docs/porting-resources.md))
+
+- **Hardware.** OpenBSD's written criteria for a supported platform (plat.html) and its old porting slides assume real hardware that developers own. The pdp64 exists as an emulator and, later, an FPGA board. What would the developers need from us?
+- **Licence of an LLVM back end.** OpenBSD's copyright policy does not accept Apache 2 code and LLVM is Apache 2.0 with LLVM exceptions; our back end is BSD 2-clause and builds on LLVM. This needs an answer before upstreaming plans are made.
+- **Retguard.** The riscv64 back end has none, and clang-local(1) lists retguard only for amd64, arm64, mips64, powerpc and powerpc64, so a pdp64 retguard would be new work in the back end (see `docs/llvm-requirements.md`).
+- **Where patches go.** `tech@`; there is no written new-architecture policy.
 
 ## Assembly to translate (summary; full table in docs/asm-inventory.md and docs/translation-verdicts.md)
 
