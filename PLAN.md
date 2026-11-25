@@ -127,6 +127,20 @@ native system. What self-hosting adds, none of it needed for first boot:
 - **The self-build is the test** that the port is complete: a release built natively on the pdp64
   has to boot and build the next one.
 
+**The bootstrap build host (decided 2026-11-24): an amd64 OpenBSD guest under KVM.** The first
+native system has to come from a cross build, and OpenBSD's cross build (`Makefile.cross`,
+`make cross-tools`, which builds a target clang from the tree's own `gnu/llvm`) is meant to run on
+OpenBSD. It was tried on Linux (Debian's `bmake` with the tree's `share/mk`): the dry run
+(`bmake -n -f Makefile.cross TARGET=riscv64 cross-tools`) parses and prints the whole plan, but the
+first real stage already fails on host tools OpenBSD assumes: `mtree` (OpenBSD's, with `-q`),
+`install -o root -g wheel`, and later `config`, `lorder`, `cap_mkdb`, `pwd_mkdb`, root-owned
+installs throughout and a full host build of LLVM. Each is fixable, none is the work we are here to
+do, so the cross build runs in an OpenBSD amd64 guest (and later the same guest builds the first
+`bsd.rd` for the pdp64). State of this machine for that: `/dev/kvm` is usable by this user; there is
+no `qemu-system-x86_64` (the existing build tree is configured for `pdp64-softmmu` only, so build an
+x86_64 one in a separate build directory); free memory is low (a few GB available, most of it taken
+by one other process), and an LLVM build wants several GB for the guest.
+
 ---
 
 ## 7. Later stages (after `pdp64/` settles) — outline only
